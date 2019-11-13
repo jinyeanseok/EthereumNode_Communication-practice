@@ -1,4 +1,4 @@
-- Java Unix Timestamp 변환 
+## Java Unix Timestamp 변환 
 
 Unix timestamp를 Date String으로 변환하는 함수
 
@@ -20,7 +20,7 @@ public static void main(String[] args) throws IOException{
    }
 ```
 
-- Text -> hex(java8은 java.util.Base64 encoding 사용)   
+## Text -> hex(java8은 java.util.Base64 encoding 사용)   
 ```
   byte[] message = "hello world".getBytes(StandardCharsets.UTF_8);
      String encoded = Base64.getEncoder().encodeToString(message);
