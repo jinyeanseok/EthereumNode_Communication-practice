@@ -11,7 +11,6 @@ import org.web3j.protocol.http.HttpService;
 import org.web3j.utils.Convert;
 import org.web3j.utils.Convert.Unit;
 import org.web3j.utils.Numeric;
-
 import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
@@ -60,7 +59,6 @@ public class Transation {
             BigInteger gasLimit = BigInteger.valueOf(210000);
             BigInteger gasPrice = Convert.toWei("1", Unit.GWEI).toBigInteger();
 
-
             //String hexDate = "EC 95 88 EB 85 95 ED 95 98 EC 84 B8 EC 9A 94 20 EB B8 94 EB A1 9D EC B2 B4 EC 9D B8 20 ED 85 8C EC 8A A4 ED 8A B8 EC 9E 85 EB 8B 88 EB 8B A4 2E";
 
             // string -> Hex
@@ -87,7 +85,6 @@ public class Transation {
                     value,String.valueOf(encoded).replaceAll("\\p{Z}", ""));
                     //value, String.valueOf("EC 95 88 EB 85 95 ED 95 98 EC 84 B8 EC 9A 94 20 EB B8 94 EB A1 9D EC B2 B4 EC 9D B8 20 ED 85 8C EC 8A A4 ED 8A B8 EC 9E 85 EB 8B 88 EB 8B A4 2E").replaceAll("\\p{Z}", "")); //hex값 입력
 
-
             // Sign the transaction
             byte[] signedMessage = TransactionEncoder.signMessage(rawTransaction, credentials); // rawTransaction , pk 값을 서명
             String hexValue = Numeric.toHexString(signedMessage); // 서명한값을 hex값 변환
@@ -102,7 +99,7 @@ public class Transation {
             // Wait for transaction to be mined
             Optional<TransactionReceipt> transactionReceipt = null;
             do {
-                System.out.println("checking if transaction " + transactionHash + " is mined....");
+                System.out.println("checking if transaction " + transactionHash + " is mined...."); // Checking 이라는 데이터를 db에 저장해서 checking이 계속나오면 화면에는 블록 생성 중이라고 표시
                 EthGetTransactionReceipt ethGetTransactionReceiptResp = web3.ethGetTransactionReceipt(transactionHash).send();  // 보내주는 부분
                 transactionReceipt = ethGetTransactionReceiptResp.getTransactionReceipt();
                 //transactionReceipt = ethGetTransactionReceiptResp.getTransactionReceipt();
@@ -124,18 +121,10 @@ public class Transation {
             SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             sdf.setTimeZone(java.util.TimeZone.getTimeZone("GMT+9"));
             String formattedDate = sdf.format(date);
-
             BigInteger size = block.getSize();
-
-
-
-
 
             // hex -> UTF-8
             byte[] decoded = Base64.getDecoder().decode(encoded);
-
-
-
 
             System.out.println("size : " + size); // 블록 높이같음
             System.out.println("TimeStamp : " + formattedDate);
@@ -143,12 +132,8 @@ public class Transation {
             System.out.println("hex : " + encoded);
             System.out.println("hexConversion : " + new String(decoded, StandardCharsets.UTF_8));
 
-
-
 //            BigInteger tp = block.getTimestamp();
 //            java.util.Date time = new java.util.Date((Long.parseLong(tp.toString())*1000L));
-
-
         } catch (IOException | InterruptedException | ExecutionException ex) {
             throw new RuntimeException(ex);
 
