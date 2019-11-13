@@ -1,6 +1,6 @@
 ## Java Unix Timestamp 변환 
 
-Unix timestamp를 Date String으로 변환하는 함수
+####Unix timestamp를 Date String으로 변환하는 함수
 
 ```
 private static String getTimestampToDate(String timestampStr){
@@ -33,14 +33,16 @@ byte[] decoded = DatatypeConverter.parseBase64Binary("aGVsbG8gd29ybGQ=");
 System.out.println(new String(decoded, "UTF-8"));
 ```
 
-## Text -> hex(**Java8**version는 java.util.Base64 encoding 사용)   
+## Java 8 version (java.util.Base64 encoding 사용)   
+
+###Text -> hex
 ```
   byte[] message = "hello world".getBytes(StandardCharsets.UTF_8);
      String encoded = Base64.getEncoder().encodeToString(message);
      System.out.println(encoded);
 ```
 
-## hex -> Text(decoding)
+### hex -> Text(decoding)
 ```
 byte[] decoded = Base64.getDecoder().decode("aGVsbG8gd29ybGQ=");
 System.out.println(new String(decoded, StandardCharsets.UTF_8));
