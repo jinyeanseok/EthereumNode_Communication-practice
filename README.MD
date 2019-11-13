@@ -35,7 +35,7 @@ System.out.println(new String(decoded, "UTF-8"));
 
 ## Java 8 version (java.util.Base64 encoding 사용)   
 
-###Text -> hex
+### Text -> hex
 ```
   byte[] message = "hello world".getBytes(StandardCharsets.UTF_8);
      String encoded = Base64.getEncoder().encodeToString(message);
