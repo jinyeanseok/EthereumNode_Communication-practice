@@ -1,5 +1,7 @@
 package io.kauri.tutorials.java_ethereum;
 
+import org.apache.log4j.BasicConfigurator;
+import org.bouncycastle.util.encoders.Hex;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.RawTransaction;
 import org.web3j.crypto.TransactionEncoder;
@@ -12,6 +14,7 @@ import org.web3j.utils.Convert;
 import org.web3j.utils.Convert.Unit;
 import org.web3j.utils.Numeric;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
@@ -19,6 +22,8 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
+
+
 
 //import org.web3j.protocol.core.methods.response.EthBlock.Block;
 
@@ -64,7 +69,7 @@ public class Transation {
             // string -> Hex
             // 프론트단에서 사용자가 입력하는 기능 추가
             byte[] message = "안녕하세요 블록체인 공부 중 입니다.".getBytes(StandardCharsets.UTF_8);
-            String encoded = Base64.getEncoder().encodeToString(message);
+            String encoded = Hex.toHexString(message);
             System.out.println(encoded);
 
 
@@ -81,9 +86,9 @@ public class Transation {
                     gasLimit,
                     recipientAddress,
                     //value,String.valueOf("ec9588eb8595ed9598ec84b8ec9a94ebb894eba19decb2b4ec9db8eab3b5ebb680eca491ec9e85eb8b88eb8ba42e").trim()); //hex값 입력
-                   // value,String.valueOf(hexDate).replaceAll("\\p{Z}", ""));
+                    // value,String.valueOf(hexDate).replaceAll("\\p{Z}", ""));
                     value,String.valueOf(encoded).replaceAll("\\p{Z}", ""));
-                    //value, String.valueOf("EC 95 88 EB 85 95 ED 95 98 EC 84 B8 EC 9A 94 20 EB B8 94 EB A1 9D EC B2 B4 EC 9D B8 20 ED 85 8C EC 8A A4 ED 8A B8 EC 9E 85 EB 8B 88 EB 8B A4 2E").replaceAll("\\p{Z}", "")); //hex값 입력
+            //value, String.valueOf("EC 95 88 EB 85 95 ED 95 98 EC 84 B8 EC 9A 94 20 EB B8 94 EB A1 9D EC B2 B4 EC 9D B8 20 ED 85 8C EC 8A A4 ED 8A B8 EC 9E 85 EB 8B 88 EB 8B A4 2E").replaceAll("\\p{Z}", "")); //hex값 입력
 
             // Sign the transaction
             byte[] signedMessage = TransactionEncoder.signMessage(rawTransaction, credentials); // rawTransaction , pk 값을 서명
@@ -124,7 +129,8 @@ public class Transation {
             BigInteger size = block.getSize();
 
             // hex -> UTF-8
-            byte[] decoded = Base64.getDecoder().decode(encoded);
+
+            byte[] decoded = Hex.decode(encoded);
 
             System.out.println("size : " + size); // 블록 높이같음
             System.out.println("TimeStamp : " + formattedDate);
@@ -137,6 +143,49 @@ public class Transation {
         } catch (IOException | InterruptedException | ExecutionException ex) {
             throw new RuntimeException(ex);
 
+        }
+    }
+
+    public static class Main {
+
+        public static void main(String[] args) {
+            BasicConfigurator.configure();
+            System.out.println("Connecting to Ethereum ...");
+            Web3j web3 = Web3j.build(new HttpService("http://localhost:8545"));
+            System.out.println("Successfuly connected to Ethereum");
+
+            try {
+                // web3_clientVersion returns the current client version.
+                Web3ClientVersion clientVersion = web3.web3ClientVersion().send();
+
+                // eth_blockNumber returns the number of most recent block.
+                EthBlockNumber blockNumber = web3.ethBlockNumber().send();
+
+                // eth_gasPrice, returns the current price per gas in wei.
+                EthGasPrice gasPrice = web3.ethGasPrice().send();
+
+                /* 계정의 최신 잔액 검색 */
+                EthGetBalance balanceWei = web3.ethGetBalance("0x811f6a5f5e13b294e35e58bf7b9dd02ad36c9490", DefaultBlockParameterName.LATEST).send();
+                BigDecimal balanceInEther = Convert.fromWei(balanceWei.getBalance().toString(), Unit.ETHER);
+
+                // 계정의 난스값 받기
+                EthGetTransactionCount ethGetTransactionCount = web3.ethGetTransactionCount("0x811f6a5f5e13b294e35e58bf7b9dd02ad36c9490", DefaultBlockParameterName.LATEST).send();
+                BigInteger nonce =  ethGetTransactionCount.getTransactionCount();
+
+
+                // Print result
+                System.out.println("Client version: " + clientVersion.getWeb3ClientVersion());
+                System.out.println("Block number: " + blockNumber.getBlockNumber());
+                System.out.println("Gas price: " + gasPrice.getGasPrice());
+                System.out.println("balance in wei: " + balanceWei.getBalance()); // 계정의 최신 잔액 검색
+                System.out.println("balance in ether: " + balanceInEther);
+                System.out.println("nonce : " + nonce);
+
+
+                //  WalletUtils.generateNewWalletFile("", "");
+            } catch (IOException ex) {
+                throw new RuntimeException("Error whilst sending json-rpc requests", ex);
+            }
         }
     }
 }
